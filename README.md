@@ -1,46 +1,44 @@
 # CCUS Patent VAE Study
 
-This repository contains the Google Colab notebook used for the experiments in *Calibrated Term-Presence Modelling for CCUS Patent Abstracts: A Case Study with Variational Autoencoders and Retrieval Baselines*. The notebook trains and evaluates calibrated term-presence models for CCUS patent abstracts, including VAE variants and retrieval baselines, and generates the figures and tables used in the manuscript.
+This repository contains the Google Colab notebook used for the experiments in *Calibrated Term Presence Modelling for CCUS Patent Abstracts: A Case Study with Variational Autoencoders and Retrieval Baselines*. The notebook processes the study dataset, trains the reported models, evaluates document completion, calibration and CPC prefix retrieval, and generates the manuscript outputs.
 
-## Repository contents
+## Files
 
-* `revised_ccus_patent_vae_colab_deterministic_extra_figures.ipynb` — end-to-end Colab notebook for preprocessing, training, evaluation and output generation.
-* `patents_cleaned_subset_10k.csv` — expected input data file. If the data file is stored elsewhere, update `PROJECT_FOLDER` in the notebook before running.
-* Generated folders, created automatically by the notebook:
+`revised_ccus_patent_vae_colab_deterministic_extra_figures.ipynb`: Colab notebook for preprocessing, training, evaluation and output generation.
 
-  * `preprocessed/` — split matrices, vocabulary, metadata, completion masks and cached embeddings.
-  * `figuresForPaper2/` — generated manuscript figures.
-  * `tablesForPaper2/` — result tables, LaTeX tables and result macros.
-  * `modelsForPaper2/` — saved model checkpoints.
+`patents_cleaned_subset_10k.csv`: Study dataset used in the reported analysis.
 
-## Computational environment
+`preprocessed/`: Split matrices, vocabulary, metadata, fixed completion masks and cached embeddings.
 
-The notebook is designed to run in Google Colab. The reported run was executed in Google Colab using an NVIDIA A100 GPU. Other CUDA-enabled GPUs should also work, but runtimes and small floating-point differences may vary across hardware and Colab environments.
+`figuresForPaper2/`: Generated manuscript figures.
 
-The first notebook cell installs the required Python packages, including NumPy, pandas, scikit-learn, PyTorch-related dependencies, Matplotlib, `sentence-transformers`, `transformers` and `accelerate`. Internet access is required if the transformer baselines need to download pretrained models.
+`tablesForPaper2/`: Generated result tables and LaTeX outputs.
 
-## Data requirements
+`modelsForPaper2/`: Saved model checkpoints.
 
-By default, the notebook expects the input CSV at:
+## Data and processing
+
+The reported analysis reads:
 
 ```text
 /content/drive/MyDrive/Colab Notebooks/Patents_Adventure/patents_cleaned_subset_10k.csv
 ```
 
-The CSV must contain:
+The notebook extracts CPC symbols from `biblio` and uses abstract text from `processed_abstract`, with `abstract_text` included as a fallback for equivalent exports. English language records are filtered when `lang` is available. The CCUS corpus retains records with CPC symbols beginning with `Y02C`, `B01D53/04`, `B01D53/46` or `B01D53/62`.
 
-* `biblio` — bibliographic metadata containing CPC classifications.
-* `processed_abstract` or `abstract_text` — patent abstract text.
+The reported filtered corpus contains 10,603 documents, split into 8,481 training documents, 1,061 validation documents and 1,061 test documents. The final vocabulary contains 4,412 terms.
 
-If a `lang` column is present, the notebook keeps only rows where `lang` is equal to `en`.
+## Running in Colab
 
-## Running the notebook in Colab
+Step 1: Open the notebook in Google Colab.
 
-1. Upload or open `revised_ccus_patent_vae_colab_deterministic_extra_figures.ipynb` in Google Colab.
-2. Select a GPU runtime from **Runtime > Change runtime type**. The reported run used an NVIDIA A100 GPU.
-3. Place `patents_cleaned_subset_10k.csv` in the expected Google Drive folder, or edit `PROJECT_FOLDER` in the configuration cell.
-4. Run all notebook cells from top to bottom.
-5. Keep the default flags for the full reviewer-facing run:
+Step 2: Select a GPU runtime. The reported run used an NVIDIA A100 GPU.
+
+Step 3: Place `patents_cleaned_subset_10k.csv` in the Google Drive folder above, or update `PROJECT_FOLDER` in the configuration cell.
+
+Step 4: Run the notebook cells from top to bottom.
+
+Step 5: Keep the following flags enabled for the full manuscript run:
 
 ```python
 RUN_NBVAE_GRID = True
@@ -49,29 +47,10 @@ RUN_OPTIONAL_PAECTER = True
 CLEAN_PREVIOUS_OUTPUTS = True
 ```
 
-`CLEAN_PREVIOUS_OUTPUTS = True` removes old generated figures and tables before a new run. Set it to `False` only if previous outputs should be preserved.
+## Models and evaluation
 
-## Main outputs
+The notebook evaluates the NB to Bernoulli VAE, direct Bernoulli VAE, ProdLDA, unigram prior, TF IDF nearest neighbours, PatentSBERTa nearest neighbours and PaECTER nearest neighbours. Document completion uses fixed validation and test masks. Calibration is evaluated on unobserved document term pairs. CPC prefix retrieval is evaluated for `B01D53/04` and `B01D53/62`.
 
-After a successful run, the main outputs are written to:
+## Reproducibility
 
-```text
-figuresForPaper2/
-tablesForPaper2/
-preprocessed/
-modelsForPaper2/
-```
-
-The `figuresForPaper2/` and `tablesForPaper2/` folders contain the main files needed for the manuscript and supplementary/reviewer-facing outputs. The `preprocessed/` folder stores intermediate matrices, metadata, masks and cached transformer embeddings so that repeated runs can reuse expensive preprocessing steps where applicable.
-
-## Reproducibility notes
-
-The notebook fixes the main random seeds, requests deterministic PyTorch behaviour where supported, disables cuDNN benchmarking, uses fixed train/validation/test splits and evaluates all models on the same document-completion masks. The reported configuration uses seed `10`, an 80:10:10 split, validation mask seed `11`, and test mask seed `12`.
-
-The neural models are trained for at most 150 epochs with early stopping, batch size 64, gradient clipping at 50.0 and a 30-epoch KL warm-up. Exact bitwise reproducibility is not guaranteed across all GPU backends, but the notebook records and fixes the relevant settings used for the reported run. For the strictest reproducibility, CPU execution can be enabled by setting:
-
-```python
-FORCE_CPU_FOR_REPRODUCIBILITY = True
-```
-
-CPU execution is expected to be substantially slower.
+The notebook fixes the main random seeds, uses deterministic PyTorch settings where supported, creates fixed train, validation and test splits, and evaluates all models on fixed document completion masks. Model selection uses the validation split. The held out test split is kept separate from model selection and is used for final reporting.
