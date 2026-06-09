@@ -6,7 +6,7 @@ This repository contains the Google Colab notebook used for the experiments in *
 
 `revised_ccus_patent_vae_colab_deterministic_extra_figures.ipynb`: Colab notebook for preprocessing, training, evaluation and output generation.
 
-`patents_cleaned_subset_10k.csv`: Study dataset used in the reported analysis.
+`patents_cleaned_subset_10k.zip`: Compressed study dataset used in the reported analysis. Please unzip this file to extract `patents_cleaned_subset_10k.csv` before running the notebook.
 
 `preprocessed/`: Split matrices, vocabulary, metadata, fixed completion masks and cached embeddings.
 
