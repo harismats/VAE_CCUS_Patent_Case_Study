@@ -1,6 +1,6 @@
 # CCUS Patent VAE Study
 
-This repository contains the Google Colab notebook used for the experiments in *Calibrated Term Presence Modelling for CCUS Patent Abstracts: A Case Study with Variational Autoencoders and Retrieval Baselines*. The notebook processes the study dataset, trains the reported models, evaluates document completion, calibration and CPC prefix retrieval, and generates the manuscript outputs.
+This repository contains the Google Colab notebook used for the experiments in the paper *Calibrated Term Presence Modelling for CCUS Patent Abstracts: A Case Study with Variational Autoencoders and Retrieval Baselines*. The notebook processes the study dataset, trains the reported models, evaluates document completion, calibration and CPC prefix retrieval and generates the manuscript outputs.
 
 ## Files
 
