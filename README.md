@@ -1,6 +1,6 @@
 # CCUS Patent VAE Study
 
-This repository contains the reproducible Google Colab workflow for the paper *Calibrated Term-Presence Models for Carbon Capture, Utilisation and Storage Patent Abstracts*. The workflow prepares the patent corpus, trains the reported models, evaluates document completion, calibration and Cooperative Patent Classification prefix retrieval and runs the conditional posterior predictive sparsity study.
+This repository contains the reproducible Google Colab workflow for the paper *Calibrated Term Presence Modelling for CCUS Patent Abstracts: A Case Study with Variational Autoencoders and Retrieval Baselines*. The workflow prepares the patent corpus, trains the reported models, evaluates document completion, calibration and Cooperative Patent Classification prefix retrieval and runs the conditional posterior predictive sparsity study.
 
 The notebook is the canonical executable source. The Python file is generated from the same notebook to make the code easier to search, compare and inspect.
 
